@@ -22,28 +22,16 @@ It's used in the [Snap framework](http://github.com:intelsdi-x/snap).
 * [golang 1.7+](https://golang.org/dl/) (needed only for building as code is written in Go)
 
 ### Operating systems
-All OSs currently supported by snap:
+All OSs currently supported by this plugin:
 * Currently tested on Windows 10, but should run on any Windows system 
 
-### $$Installation
-#### Download psutil plugin binary:
+### Installation
+#### Download perfmon plugin binary:
 You can get the pre-built binaries under the plugin's [release](https://github.com/Snap-for-Windows/snap-plugin-collector-perfmon/releases) page.  For Snap, check [here](https://github.com/intelsdi-x/snap/releases).
 
 
-#### $$To build the plugin binary:
-Fork https://github.com/Snap-for-Windows/snap-plugin-collector-perfmon
-
-Clone repo into `$GOPATH\src\github.com\intelsdi-x\`:
-
-```
-$ git clone https://github.com/<yourGithubID>/snap-plugin-collector-perfmon.git
-```
-
-Build the plugin by running make within the cloned repo:
-```
-$ make
-```
-This builds the plugin in `./build/`
+#### To build the plugin binary:
+Need to create a build script for this plugin still.
 
 ### Configuration and Usage
 * Set up the [Snap framework](https://github.com/intelsdi-x/snap/blob/master/README.md#getting-started)
@@ -51,74 +39,34 @@ This builds the plugin in `./build/`
 ## Documentation
 There are a number of other resources you can review to learn to use this plugin:
 
-* [gopsutil](https://github.com/shirou/gopsutil/) (go based implementation)
-* [psutil](https://pythonhosted.org/psutil/) (python based implementation)
-* [Snap psutil integration test](https://github.com/intelsdi-x/snap-plugin-collector-psutil/blob/master/psutil/psutil_integration_test.go)
-* [Snap psutil unit test](https://github.com/intelsdi-x/snap-plugin-collector-psutil/blob/master/psutil/psutil_test.go)
-* [Snap psutil examples](#examples)
+* [Snap perfmon unit test](https://github.com/Snap-for-Windows/snap-plugin-collector-perfmon/perfmon/perfmon_test.go)
+* [Snap perfmon examples](#examples)
+* [Possible add-on counters and descriptions](https://blogs.technet.microsoft.com/askcore/2012/03/16/windows-performance-monitor-disk-counters-explained/)
+* [Common counters and thresholds](https://blogs.technet.microsoft.com/bulentozkir/2014/02/14/top-10-most-important-performance-counters-for-windows-and-their-recommended-values/)
+* [More Common counters and thresholds](https://support.symantec.com/en_US/article.HOWTO9722.html)
+* [Even More common counters and thresholds](http://techgenix.com/Key-Performance-Monitor-Counters/)
 
 ### Collected Metrics
-This plugin has the ability to gather the following metrics:
+Currently, this plugin has the ability to gather the following metrics:
 
 Namespace | Description (optional)
 ----------|-----------------------
-/intel/psutil/cpu/cpu-total/guest | time spent in guest mode accumulated over all cpus
-/intel/psutil/cpu/cpu-total/guest_nice | time spent running a niced guest (virtual CPU for guest operating systems under the control of the Linux kernel) accumulated over all cpus
-/intel/psutil/cpu/cpu-total/idle | time spent in the idle task accumulated over all cpus.  This value should be USER_HZ times the second entry in the /proc/uptime pseudo-file
-/intel/psutil/cpu/cpu-total/iowait | time waiting for I/O to complete accumulated over all cpus
-/intel/psutil/cpu/cpu-total/irq | time servicing interrupts accumulated over all cpus
-/intel/psutil/cpu/cpu-total/nice | time spent in user mode with low priority (nice) accumulated over all cpus
-/intel/psutil/cpu/cpu-total/softirq | time spent servicing softirqs accumulated over all cpus
-/intel/psutil/cpu/cpu-total/steal | stolen time, which is the time spent in other operating systems when running in a virtualized environment accumulated over all cpus
-/intel/psutil/cpu/cpu-total/stolen |
-/intel/psutil/cpu/cpu-total/system | time spent in system mode accumulated over all cpus
-/intel/psutil/cpu/cpu-total/user | time spent in user mode accumulated over all cpus
-/intel/psutil/cpu/[CPU]/guest | time spent in guest mode
-/intel/psutil/cpu/[CPU]/guest_nice | time spent running a niced guest (virtual CPU for guest operating systems under the control of the Linux kernel)
-/intel/psutil/cpu/[CPU]/idle | time spent in the idle task.  This value should be USER_HZ times the second entry in the /proc/uptime pseudo-file
-/intel/psutil/cpu/[CPU]/iowait | time waiting for I/O to complete
-/intel/psutil/cpu/[CPU]/irq | time servicing interrupts
-/intel/psutil/cpu/[CPU]/nice | time spent in user mode with low priority (nice)
-/intel/psutil/cpu/[CPU]/softirq | time spent servicing softirqs
-/intel/psutil/cpu/[CPU]/steal | stolen time, which is the time spent in other operating systems when running in a virtualized environment
-/intel/psutil/cpu/[CPU]/stolen |
-/intel/psutil/cpu/[CPU]/system | time spent in system mode
-/intel/psutil/cpu/[CPU]/user | time spent in user mode
-|
-/intel/psutil/load/load1 | load average over the last 1 minute
-/intel/psutil/load/load15 | load average over the last 15 minutes
-/intel/psutil/load/load5 | load average over the last 5 minutes
-|
-/intel/psutil/net/all/bytes_recv | number of bytes sent
-/intel/psutil/net/all/bytes_sent | number of bytes received
-/intel/psutil/net/all/dropin | total number of incoming packets which were dropped
-/intel/psutil/net/all/dropout | total number of outgoing packets which were dropped (always 0 on OSX and BSD)
-/intel/psutil/net/all/errin | total number of errors while receiving
-/intel/psutil/net/all/errout | total number of errors while sending
-/intel/psutil/net/all/packets_recv | number of packets received
-/intel/psutil/net/all/packets_sent | number of packets sent
-/intel/psutil/net/[INTERFACE]/bytes_recv | number of bytes sent on given interface
-/intel/psutil/net/[INTERFACE]/bytes_sent | number of bytes received on given interface
-/intel/psutil/net/[INTERFACE]/dropin | total number of incoming packets which were dropped on given interface
-/intel/psutil/net/[INTERFACE]/dropout | total number of outgoing packets which were dropped (always 0 on OSX and BSD) o given interface
-/intel/psutil/net/[INTERFACE]/errin | total number of errors while receiving on given interface
-/intel/psutil/net/[INTERFACE]/errout | total number of errors while sending on given interface
-/intel/psutil/net/[INTERFACE]/packets_recv | number of packets received on given interface
-/intel/psutil/net/[INTERFACE]/packets_sent | number of packets sent on given interface
-|
-/intel/psutil/vm/active | memory currently in use or very recently used, and so it is in RAM
-/intel/psutil/vm/available | the actual amount of available memory that can be given instantly to processes that request more memory in bytes; this is calculated by summing different memory values depending on the platform (e.g. free + buffers + cached on Linux) and it is supposed to be used to monitor actual memory usage in a cross platform fashion
-/intel/psutil/vm/buffers | cache for things like file system metadata
-/intel/psutil/vm/cached | cache for various things
-/intel/psutil/vm/free | memory not being used at all (zeroed) that is readily available; note that this doesn't reflect the actual memory available (use 'available' instead).
-/intel/psutil/vm/inactive | memory that is marked as not used
-/intel/psutil/vm/total | total physical memory available
-/intel/psutil/vm/used | memory used, calculated differently depending on the platform and designed for informational purposes only.
-/intel/psutil/vm/used_percent | percent memory used
-/intel/psutil/vm/wired | memory that is marked to always stay in RAM. It is never moved to disk
+/intel/perfmon/physicalDisk_idle_time | percent time that hard disk is idle over a measurement interval
+/intel/perfmon/physicalDisk_avg_read | average time (in seconds) of a read of data from the disk
+/intel/perfmon/physicalDisk_avg_write | average time (in seconds) of a write of data to the disk
+/intel/perfmon/physicalDisk_queue_length | average number of both read and write requests that were queued for all disks during sample interval
+/intel/perfmon/memory_committed_bytes | bytes of RAM being used
+/intel/perfmon/memory_available_mbytes | mbytes of RAM available for use
+/intel/perfmon/memory_pagespersec | rate at which pages are read from or written to disk 
+/intel/perfmon/page_usage | percentage of paging file (for virtual memory) being used
+/intel/perfmon/system_up_time | seconds since server last rebooted
+/intel/perfmon/system_context_switches | how frequently the processor has to switch from user- to kernel-mode per second
+/intel/perfmon/processor_time | percentage of elapsed time that all of process threads used the processor (in this case, all the processors) to execute instructions
+/intel/perfmon/logical_disk_free | percentage of the total usable space on the selected logical disk that is free (in this case, the total of all logical disks on machine)
 
 ### Examples
-This is an example running psutil and writing data to a file. It is assumed that you are using the latest Snap binary and plugins.
+This is an example running perfmon and writing data to a file. It is assumed that you are using the latest Snap binary and plugins.
+It is also assumed that the user has a folder within the C: drive called "SnapLogs".
 
 The example is run from a directory which includes snaptel, snapteld, along with the plugins and task file.
 
@@ -128,100 +76,109 @@ $ snapteld -l 1 -t 0
 ```
 
 In another terminal window:
-Load psutil plugin
+Load perfmon plugin
 ```
-$ snaptel plugin load snap-plugin-collector-psutil
+$ snaptel plugin load snap-plugin-collector-perfmon
+Plugin loaded
+Name: perfmon-collector
+Version: 1
+Type: collector
+Signed: false
+Loaded Time: Mon, 20 Feb 2017 11:17:17 MST
 ```
 See available metrics for your system
 ```
 $ snaptel metric list
 ```
 
-Create a task manifest file (e.g. `task-psutil.json`):    
+Create a task manifest file (e.g. `task-perfmon.json`):    
 ```json
-{
+{ 
     "version": 1,
     "schedule": {
         "type": "simple",
-        "interval": "1s"
+        "interval": "30s"
     },
+    "max-failures": 10,
     "workflow": {
         "collect": {
             "metrics": {
-                "/intel/psutil/load/load1": {},
-                "/intel/psutil/load/load5": {},
-                "/intel/psutil/load/load15": {},
-                "/intel/psutil/cpu/*/user": {},
-                "/intel/psutil/net/*/bytes_sent": {},
-                "/intel/psutil/vm/available": {},
-                "/intel/psutil/vm/free": {},
-                "/intel/psutil/vm/used": {}
+                "/intel/perfmon/memory_committed_bytes": {},
+                "/intel/perfmon/memory_available_mbytes": {},
+                "/intel/perfmon/processor_time": {}
             },
-            "config": {
-                "/intel/mock": {
-                    "password": "secret",
-                    "user": "root"
-                }
-            },
-            "publish": [
-                {                         
-                    "plugin_name": "file",
-                    "config": {
-                        "file": "/tmp/published_psutil"
-                    }
+            "process": [
+                {
+                    "plugin_name": "passthru-grpc",
+                    "process": null,
+                    "publish": [
+                        {
+                            "plugin_name": "mock-file-grpc",
+                            "config": {
+                                "file": "C:\\SnapLogs\\perfmon_published_revised.log"
+                            }
+                        }
+                    ]
                 }
             ]
         }
     }
 }
 ```
+Load passthru plugin for processing:
+```
+$ snaptel plugin load snap-plugin-processor-passthru-grpc
+Plugin loaded
+Name: passthru-grpc
+Version: 1
+Type: processor
+Signed: false
+Loaded Time: Mon, 20 Feb 2017 11:16:37 MST
+```
 
 Load file plugin for publishing:
 ```
-$ snaptel plugin load snap-plugin-publisher-file
+$ snaptel plugin load snap-plugin-publisher-mock-file-grpc
 Plugin loaded
-Name: file
-Version: 3
+Name: mock-file-grpc
+Version: 1
 Type: publisher
 Signed: false
-Loaded Time: Fri, 20 Nov 2015 11:41:39 PST
+Loaded Time: Mon, 20 Feb 2017 11:16:58 MST
 ```
 
 Create task:
 ```
-$ snaptel task create -t task-psutil.json
+$ snaptel task create -t task-perfmon.json
 Using task manifest to create task
 Task created
-ID: 02dd7ff4-8106-47e9-8b86-70067cd0a850
-Name: Task-02dd7ff4-8106-47e9-8b86-70067cd0a850
+ID: 4a156b0f-582f-4a13-8d67-120a2ba72e1d
+Name: Task-4a156b0f-582f-4a13-8d67-120a2ba72e1d
 State: Running
 ```
 
 See file output (this is just part of the file):
 ```
-2015-11-20 11:46:03.637390565 -0800 PST|[intel psutil load load1]|1.82|username-mac01.jf.intel.com
-2015-11-20 11:46:03.641160359 -0800 PST|[intel psutil load load15]|2.09|username-mac01.jf.intel.com
-2015-11-20 11:46:03.643858208 -0800 PST|[intel psutil load load5]|2.08|username-mac01.jf.intel.com
-2015-11-20 11:46:03.661173851 -0800 PST|[intel psutil vm available]|168882176|username-mac01.jf.intel.com
-2015-11-20 11:46:03.67167664 -0800 PST|[intel psutil vm free]|168943616|username-mac01.jf.intel.com
-2015-11-20 11:46:03.681965105 -0800 PST|[intel psutil vm used]|17010798592|username-mac01.jf.intel.com
-2015-11-20 11:46:04.641244629 -0800 PST|[intel psutil load load1]|1.82|username-mac01.jf.intel.com
-2015-11-20 11:46:04.644420189 -0800 PST|[intel psutil load load15]|2.09|username-mac01.jf.intel.com
-2015-11-20 11:46:04.647166418 -0800 PST|[intel psutil load load5]|2.08|username-mac01.jf.intel.com
-2015-11-20 11:46:04.657065347 -0800 PST|[intel psutil vm available]|168984576|username-mac01.jf.intel.com
-2015-11-20 11:46:04.666346721 -0800 PST|[intel psutil vm free]|169054208|username-mac01.jf.intel.com
-2015-11-20 11:46:04.676683476 -0800 PST|[intel psutil vm used]|17010716672|username-mac01.jf.intel.com
+2017-02-20 12:05:57.6877987 -0700 MST|[{intel  } {perfmon  } {processor_time  }]|0.658707496758626|tags[plugin_running_on:DESKTOP-0GETRGO]
+2017-02-20 12:05:57.6877987 -0700 MST|[{intel  } {perfmon  } {memory_available_mbytes  }]|10381|tags[plugin_running_on:DESKTOP-0GETRGO]
+2017-02-20 12:05:57.6877987 -0700 MST|[{intel  } {perfmon  } {memory_committed_bytes  }]|38.7844268555717|tags[plugin_running_on:DESKTOP-0GETRGO]
+2017-02-20 12:06:27.6945658 -0700 MST|[{intel  } {perfmon  } {processor_time  }]|1.25933460733828|tags[plugin_running_on:DESKTOP-0GETRGO]
+2017-02-20 12:06:27.6945658 -0700 MST|[{intel  } {perfmon  } {memory_available_mbytes  }]|10382|tags[plugin_running_on:DESKTOP-0GETRGO]
+2017-02-20 12:06:27.6945658 -0700 MST|[{intel  } {perfmon  } {memory_committed_bytes  }]|38.8447365115501|tags[plugin_running_on:DESKTOP-0GETRGO]
+2017-02-20 12:06:57.6960669 -0700 MST|[{intel  } {perfmon  } {processor_time  }]|1.84033283218797|tags[plugin_running_on:DESKTOP-0GETRGO]
+2017-02-20 12:06:57.6960669 -0700 MST|[{intel  } {perfmon  } {memory_available_mbytes  }]|10381|tags[plugin_running_on:DESKTOP-0GETRGO]
+2017-02-20 12:06:57.6960669 -0700 MST|[{intel  } {perfmon  } {memory_committed_bytes  }]|38.8223214631021|tags[plugin_running_on:DESKTOP-0GETRGO]
 ```
 
 Stop task:
 ```
-$ snaptel task stop 02dd7ff4-8106-47e9-8b86-70067cd0a850
+$ snaptel task stop 4a156b0f-582f-4a13-8d67-120a2ba72e1d
 Task stopped:
-ID: 02dd7ff4-8106-47e9-8b86-70067cd0a850
+ID: 4a156b0f-582f-4a13-8d67-120a2ba72e1d
 ```
 
 ### Roadmap
-There isn't a current roadmap for this plugin, but it is in active development. As we launch this plugin, we do not have any outstanding requirements for the next release. If you have a feature request, please add it as an [issue](https://github.com/intelsdi-x/snap-plugin-collector-psutil/issues/new) and/or submit a [pull request](https://github.com/intelsdi-x/snap-plugin-collector-psutil/pulls).
+There isn't a current roadmap for this plugin, but it is in active development. As we launch this plugin, we do not have any outstanding requirements for the next release. If you have a feature request, please add it as an [issue](https://github.com/intelsdi-x/snap-plugin-collector-perfmon/issues/new) and/or submit a [pull request](https://github.com/intelsdi-x/snap-plugin-collector-perfmon/pulls).
 
 ## Community Support
 This repository is one of **many** plugins in **Snap**, a powerful telemetry framework. See the full project at http://github.com/intelsdi-x/snap To reach out to other users, head to the [main framework](https://github.com/intelsdi-x/snap#community-support)
