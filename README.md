@@ -19,7 +19,9 @@ It's used in the [Snap framework](http://github.com:intelsdi-x/snap).
 
 ## Getting Started
 ### System Requirements 
-* [golang 1.7+](https://golang.org/dl/) (needed only for building as code is written in Go)
+* [powershell 4.0+ recommended](https://www.microsoft.com/en-us/download/details.aspx?id=40855): Powershell v2.0 does not have the Get-Counter powershell command, which this plugin requires. Windows Management Framework 4.0 or higher is recommended (although WMF 3.0 will work as well) as it includes an updated version of powershell. If the plugin fails, this is likely the cause.
+* [golang 1.7+](https://golang.org/dl/): Needed only for building as code is written in Go.
+* [glide 0.12.3+](http://glide.sh/): Required for developers in order to install correct package dependency versions.
 
 ### Operating systems
 All OSs currently supported by this plugin:
@@ -27,19 +29,26 @@ All OSs currently supported by this plugin:
 
 ### Installation
 #### Download perfmon plugin binary:
-You can get the pre-built binaries under the plugin's [release](https://github.com/Snap-for-Windows/snap-plugin-collector-perfmon/releases) page.  For Snap, check [here](https://github.com/intelsdi-x/snap/releases).
+You can get the pre-built binaries under the plugin's [release](https://github.com/intelsdi-x/snap-plugin-collector-perfmon/releases) page.  For Snap, check [here](https://github.com/intelsdi-x/snap/releases).
 
 
 #### To build the plugin binary:
-Need to create a build script for this plugin still.
+Build script for this plugin pending.  
+For now, build manually:  
+1. Download the plugin with `go get github.com/intelsdi-x/snap-plugin-collector-perfmon`
+2. Navigate to the snap-plugin-collector-perfmon folder in your Go-Workspace
+3. Use Glide to install correct dependency versions with `glide install`
+4. Build the snap-plugin-collector-perfmon executable with `go install`
+5. The plugin executable should now be located at [Path to Go-Workspace]\bin
 
 ### Configuration and Usage
 * Set up the [Snap framework](https://github.com/intelsdi-x/snap/blob/master/README.md#getting-started)
+* Due to current overhead issues with powershell, if gathering all plugin metrics, it is recommended that you use a task interval of 30 seconds or higher to ensure minimum failures when integrating with Snap.
 
 ## Documentation
 There are a number of other resources you can review to learn to use this plugin:
 
-* [Snap perfmon unit test](https://github.com/Snap-for-Windows/snap-plugin-collector-perfmon/perfmon/perfmon_test.go)
+* [Snap perfmon unit test](https://github.com/intelsdi-x/snap-plugin-collector-perfmon/perfmon/perfmon_test.go)
 * [Snap perfmon examples](#examples)
 * [Possible add-on counters and descriptions](https://blogs.technet.microsoft.com/askcore/2012/03/16/windows-performance-monitor-disk-counters-explained/)
 * [Common counters and thresholds](https://blogs.technet.microsoft.com/bulentozkir/2014/02/14/top-10-most-important-performance-counters-for-windows-and-their-recommended-values/)
@@ -68,7 +77,7 @@ Namespace | Description (optional)
 This is an example running perfmon and writing data to a file. It is assumed that you are using the latest Snap binary and plugins.
 It is also assumed that the user has a folder within the C: drive called "SnapLogs".
 
-The example is run from a directory which includes snaptel, snapteld, along with the plugins and task file.
+The example is run from a directory which includes `snaptel`, `snapteld`, along with the plugins and task file.
 
 In one terminal window, open the Snap daemon (in this case with logging set to 1 and trust disabled):
 ```
@@ -194,4 +203,4 @@ There's more than one way to give back, from examples to blogs to code updates. 
 ## Acknowledgements
 * Author: [@mathewlk](https://github.com/mathewlk/)
 
-And **thank you!** Your contribution, through code and participation, is incredibly important to us.
+And **thank you!** Your contribution, through code and participation, is incredibly important to us.  

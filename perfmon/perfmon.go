@@ -1,8 +1,8 @@
 package perfmon
 
 import (
-	"time"
 	"fmt"
+	"time"
 
 	"github.com/intelsdi-x/snap-plugin-lib-go/v1/plugin"
 )
@@ -11,20 +11,21 @@ import (
 type PerfmonCollector struct {
 }
 
+var availableMetrics = []string{
+	"physicalDisk_idle_time", "physicalDisk_avg_read", "physicalDisk_avg_write", "physicalDisk_queue_length",
+	"memory_committed_bytes", "memory_available_mbytes", "memory_pagespersec",
+	"pagingFile_percent_usage",
+	"system_up_time", "system_context_switches",
+	"processor_percent_time",
+	"logicalDisk_free_space"}
 
 func stringInNamespace(givenString string) bool {
-	availableMetrics := []string{"physicalDisk_idle_time", "physicalDisk_avg_read", "physicalDisk_avg_write", "physicalDisk_queue_length",
-        "memory_committed_bytes", "memory_available_mbytes", "memory_pagespersec",
-        "page_usage", 
-        "system_up_time", "system_context_switches", 
-        "processor_time",
-        "logical_disk_free"}
 	for _, metricName := range availableMetrics {
-        if metricName == givenString {
-            return true
-        }
-    }
-    return false
+		if metricName == givenString {
+			return true
+		}
+	}
+	return false
 }
 
 /*
@@ -34,27 +35,30 @@ func stringInNamespace(givenString string) bool {
 * Output: A slice (list) of the collected metrics as plugin.Metric with their values and an error if failure.
  */
 func (PerfmonCollector) CollectMetrics(mts []plugin.Metric) ([]plugin.Metric, error) {
-	metrics := []plugin.Metric{} 					// Create a slice of MetricType objects. This is where the metrics requested by the task will be stored
-	// Iterate through metrics first time to create slice of metric names
+	metrics := []plugin.Metric{} // Create a slice of MetricType objects. This is where the metrics requested by the task will be stored
+	// Iterate through metrics first time to create slice of metric names to pass to GetPowershellData
 	metricNames := make([]string, 0)
 	for _, mt := range mts {
-		metricNames = append(metricNames, mt.Namespace[len(mt.Namespace)-1].Value)
+		fullNameSpace := mt.Namespace[2].Value + "_" + mt.Namespace[3].Value
+		metricNames = append(metricNames, fullNameSpace)
 	}
+
 	// Get metric data from powershell script if data has not been set already (for testing). 0 means there was an error getting that metric from system
 	counterData := GetPowershellData(metricNames)
-	// Iterate through each of the metrics specified by task to collect	
+	// Iterate through each of the metrics specified by task to collect
 	for idx, mt := range mts {
+		fullNameSpace := mt.Namespace[2].Value + "_" + mt.Namespace[3].Value
 		// Make sure the metric given in the Task is actually a metric provided by this plugin
-		if stringInNamespace(mt.Namespace[len(mt.Namespace)-1].Value) { 
-			mts[idx].Timestamp = time.Now() 			// Set metric timestamp
+		if stringInNamespace(fullNameSpace) {
+			mts[idx].Timestamp = time.Now() // Set metric timestamp
 			// Make sure config hasn't been set for testing (SEE perfmon_test.go)
 			if val, err := mt.Config.GetFloat("testfloat"); err == nil {
 				mts[idx].Data = val
 			} else {
-				mts[idx].Data = counterData[mt.Namespace[len(mt.Namespace)-1].Value]	// Set metric value
+				mts[idx].Data = counterData[fullNameSpace] // Set metric value
 			}
 			metrics = append(metrics, mts[idx])
-	} else {
+		} else {
 			return nil, fmt.Errorf("Invalid metric: %v", mt.Namespace.Strings())
 		}
 	}
@@ -72,52 +76,52 @@ func (PerfmonCollector) GetMetricTypes(cfg plugin.Config) ([]plugin.Metric, erro
 	// slice to store list of all available perfmon metrics
 	mts := []plugin.Metric{}
 
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "physicalDisk_idle_time"),
-		Version:   1,
-	})	
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "physicalDisk_avg_read"),
-		Version:   1,
-	})	
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "physicalDisk_avg_write"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "physicalDisk", "idle_time"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "physicalDisk_queue_length"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "physicalDisk", "avg_read"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "memory_committed_bytes"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "physicalDisk", "avg_write"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "memory_available_mbytes"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "physicalDisk", "queue_length"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "memory_pagespersec"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "memory", "committed_bytes"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "page_usage"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "memory", "available_mbytes"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "system_up_time"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "memory", "pagespersec"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "system_context_switches"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "pagingFile", "percent_usage"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "processor_time"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "system", "up_time"),
 		Version:   1,
 	})
-	mts = append(mts, plugin.Metric {
-		Namespace: plugin.NewNamespace("intel", "perfmon", "logical_disk_free"),
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "system", "context_switches"),
+		Version:   1,
+	})
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "processor", "percent_time"),
+		Version:   1,
+	})
+	mts = append(mts, plugin.Metric{
+		Namespace: plugin.NewNamespace("intel", "perfmon", "logicalDisk", "free_space"),
 		Version:   1,
 	})
 
@@ -138,6 +142,6 @@ func (PerfmonCollector) GetConfigPolicy() (plugin.ConfigPolicy, error) {
 		plugin.SetMaxFloat(1000.0),
 		plugin.SetMinFloat(0.0))
 
-	// For now, assuming that perfmon has no configs. May need to add some if permissions becomes an issue. 
+	// For now, assuming that perfmon has no configs. May need to add some if permissions becomes an issue.
 	return *policy, nil
 }
