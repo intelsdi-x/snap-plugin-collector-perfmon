@@ -60,18 +60,18 @@ Currently, this plugin has the ability to gather the following metrics:
 
 Namespace | Description (optional)
 ----------|-----------------------
-/intel/perfmon/physicalDisk_idle_time | percent time that hard disk is idle over a measurement interval
-/intel/perfmon/physicalDisk_avg_read | average time (in seconds) of a read of data from the disk
-/intel/perfmon/physicalDisk_avg_write | average time (in seconds) of a write of data to the disk
-/intel/perfmon/physicalDisk_queue_length | average number of both read and write requests that were queued for all disks during sample interval
-/intel/perfmon/memory_committed_bytes | bytes of RAM being used
-/intel/perfmon/memory_available_mbytes | mbytes of RAM available for use
-/intel/perfmon/memory_pagespersec | rate at which pages are read from or written to disk 
-/intel/perfmon/page_usage | percentage of paging file (for virtual memory) being used
-/intel/perfmon/system_up_time | seconds since server last rebooted
-/intel/perfmon/system_context_switches | how frequently the processor has to switch from user- to kernel-mode per second
-/intel/perfmon/processor_time | percentage of elapsed time that all of process threads used the processor (in this case, all the processors) to execute instructions
-/intel/perfmon/logical_disk_free | percentage of the total usable space on the selected logical disk that is free (in this case, the total of all logical disks on machine)
+/intel/perfmon/physicalDisk/idle_time | percent time that hard disk is idle over a measurement interval
+/intel/perfmon/physicalDisk/avg_read | average time (in seconds) of a read of data from the disk
+/intel/perfmon/physicalDisk/avg_write | average time (in seconds) of a write of data to the disk
+/intel/perfmon/physicalDisk/queue_length | average number of both read and write requests that were queued for all disks during sample interval
+/intel/perfmon/memory/committed_bytes | bytes of RAM being used
+/intel/perfmon/memory/available_mbytes | mbytes of RAM available for use
+/intel/perfmon/memory/pagespersec | rate at which pages are read from or written to disk 
+/intel/perfmon/pagingFile/percent_usage | percentage of paging file (for virtual memory) being used
+/intel/perfmon/system/up_time | seconds since server last rebooted
+/intel/perfmon/system/context_switches | how frequently the processor has to switch from user- to kernel-mode per second
+/intel/perfmon/processor/percent_time | percentage of elapsed time that all of process threads used the processor (in this case, all the processors) to execute instructions
+/intel/perfmon/logicalDisk/free_space | percentage of the total usable space on the selected logical disk that is free (in this case, the total of all logical disks on machine)
 
 ### Examples
 This is an example running perfmon and writing data to a file. It is assumed that you are using the latest Snap binary and plugins.
@@ -112,9 +112,9 @@ Create a task manifest file (e.g. `task-perfmon.json`):
     "workflow": {
         "collect": {
             "metrics": {
-                "/intel/perfmon/memory_committed_bytes": {},
-                "/intel/perfmon/memory_available_mbytes": {},
-                "/intel/perfmon/processor_time": {}
+                "/intel/perfmon/memory/committed_bytes": {},
+                "/intel/perfmon/memory/available_mbytes": {},
+                "/intel/perfmon/processor/percent_time": {}
             },
             "process": [
                 {
@@ -124,7 +124,7 @@ Create a task manifest file (e.g. `task-perfmon.json`):
                         {
                             "plugin_name": "mock-file-grpc",
                             "config": {
-                                "file": "C:\\SnapLogs\\perfmon_published_revised.log"
+                                "file": "C:\\SnapLogs\\perfmon.log"
                             }
                         }
                     ]
