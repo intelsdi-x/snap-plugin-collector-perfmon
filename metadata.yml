@@ -1,0 +1,8 @@
+name: perfmon
+type: collector
+maintainer: core
+license: Apache-2.0
+description: "Collects Windows Perfmon metrics"
+badge:
+ci:
+status: "Under Construction"  
